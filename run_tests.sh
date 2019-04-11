@@ -13,10 +13,14 @@ g++ -O3 main.cpp timer.cpp
 
 
 echo "Bash"
-time ./bash.sh corpus.txt
+./bash.sh corpus.txt
 
 echo "Python"
 python3 test.py
 
-echo "JS"
-node test.js
+echo "Rust"
+rustc -O find_longest.rs
+./find_longest corpus.txt
+
+#echo "JS"
+#node test.js
