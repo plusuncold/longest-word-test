@@ -16,6 +16,10 @@ echo "Bash"
 echo "Python"
 python3 test.py
 
+echo "Cython"
+python3 setup.py build_ext --inplace
+python3 run_cythoned_test.py
+
 echo "Rust"
 rustc -O find_longest.rs
 ./find_longest corpus.txt

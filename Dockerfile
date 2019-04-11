@@ -6,7 +6,10 @@ RUN apk update && apk add \
     go \
     rust \
     bash \
-    python3
+    python3 \
+    pip3
+
+RUN pip3 install cython
 
 WORKDIR /home
 COPY * /home/
