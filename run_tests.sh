@@ -7,10 +7,8 @@ if [ ! -f corpus.txt ]; then
 fi
 
 echo "C++"
-
 g++ -O3 main.cpp timer.cpp
 ./a.out
-
 
 echo "Bash"
 ./bash.sh corpus.txt
@@ -22,5 +20,8 @@ echo "Rust"
 rustc -O find_longest.rs
 ./find_longest corpus.txt
 
-#echo "JS"
-#node test.js
+echo "JS"
+node test_stream.js
+
+echo "Golang"
+go run ./timer.go
