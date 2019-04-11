@@ -25,7 +25,7 @@ rustc -O find_longest.rs
 ./find_longest corpus.txt
 
 echo "JS"
-node test_stream.js
+node --experimental-worker test_stream.js
 
 echo "Golang"
 go run ./timer.go
