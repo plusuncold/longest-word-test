@@ -1,7 +1,7 @@
 FROM python:3-alpine
 
 RUN apk update && apk add \
-    nodejs \
+    nodejs-current \
     build-base
 
 WORKDIR /home
