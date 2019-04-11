@@ -2,23 +2,34 @@ const fs = require('fs')
 const { Worker } = require('worker_threads')
 const start = Date.now()
 
-let proms = []
-
 const readStream = fs.createReadStream('corpus.txt', 'utf8')
-let buffer = ''
-let i = 0
+
+// let proms = []
+// let buffer = ''
+// let i = 0
+let longest = ''
 
 readStream.on('data', function(chunk) {
-  // chunk.split(/\s/).forEach(w => {
-  //   if (w.length > longest.length) longest = w
-  // })
-  buffer += chunk
-  if (i % 10000 === 0) {
-    proms.push(runService(buffer))
-    buffer = ''
-  }
-  i++
-}).on('end', doRollup)
+  chunk.split(/\s/).forEach(w => {
+    if (w.length > longest.length) longest = w
+  })
+
+  // Unfortunately, the overhead for spinning up a thread
+  // far outweighs the savings of concurrent processing
+
+  // buffer = buffer + chunk
+  // if (i % 100 === 0) {
+  //   // console.log("pushing buffer of size ", buffer.length)
+  //   proms.push(runService(buffer))
+  //   buffer = ''
+  // }
+  // i++
+}).on('end', () => {
+  // console.log("pushing buffer of size ", buffer.length)
+  // proms.push(runService(buffer))
+  // doRollup()
+  console.log(longest, longest.length, Date.now() - start + 'ms');
+})
 
 function doRollup () {
   Promise.all(proms).then(res => {
