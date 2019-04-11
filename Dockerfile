@@ -1,7 +1,7 @@
 FROM alpine
 
 RUN apk update && apk add \
-    nodejs \
+    nodejs-current \
     build-base \
     go \
     rust \
