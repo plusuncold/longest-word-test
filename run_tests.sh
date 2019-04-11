@@ -20,3 +20,6 @@ python3 test.py
 
 echo "JS"
 node test_stream.js
+
+echo "Golang"
+go run ./timer.go
