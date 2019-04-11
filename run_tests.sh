@@ -19,4 +19,4 @@ echo "Python"
 python3 test.py
 
 echo "JS"
-node test.js
+node test_stream.js
