@@ -8,7 +8,8 @@
   - Parsing arguments is not counted
   - Runtime initialization is not counted
   - Time should be measured in MS
-1. Solutions are currently divided into two categories: single-threaded and concurrent.
+
+Note: Solutions are currently divided into two categories: single-threaded and concurrent.
 
 ## How to participate
 
