@@ -16,15 +16,19 @@ int main() {
     vector<string> text;
     ifstream file(path.c_str());
     string line;
+
+    // Read the file in
     while(getline(file,line)) {
 	text.push_back(line);
     }
     file.close();
 
+    // Run the striding test
     auto id = Timer::timerBegin();
     findLongestWord(text);
     auto timeStriding = Timer::timerEnd(id);
 
+    // Run the simple test
     id = Timer::timerBegin();
     findLongestWordSimple(text);
     auto timeSimple = Timer::timerEnd(id);
@@ -37,11 +41,17 @@ int main() {
 
 void innerTestForLongest(const string& line, const int start, const int end,
 			 string& longestWord, int& longestWordLength) {
+    // Iterate through every character in the range
     for (int index = start ; index <= end ; index++) {
-	//cout << "Is " << line[index] << " a space?" << endl;
+	// If this chunk has a space
 	if (line[index] == ' ') {
+	    // If left chunk could have longest word check it
+	    if (index - start > longestWordLength) {
+		innerTestForLongest(line, start, index - 1, longestWord, longestWordLength);
+	    }
+
+	    // If right chunk could have longest word check it
 	    if (end - (index + 1) > longestWordLength) {
-		//cout << "Searching smaller: $" << line.substr(index+1,end - index) << "$" << endl;
 		innerTestForLongest(line, index+1, end, longestWord, longestWordLength);
 	    }
 	    return;
@@ -51,32 +61,33 @@ void innerTestForLongest(const string& line, const int start, const int end,
     // If reached here then the word is continuous and thus the longest word
     longestWord = line.substr(start,end - start + 1);
     longestWordLength = end - start + 1;
-    //cout << "Longest word is '" << longestWord << "' length " << longestWordLength << endl;
 }
 
 void findLongestWord(const vector<string>& text) {
     string word, longestWord;
     int longestWordLength = 0;
 
+    // For every line in the corpus
     for (const string& line : text) {
 	const int lineLength = line.size();
-	//cout << "$" << line << "$" << lineLength << endl;
+
 	// Stride along line spliting into longestWordLength chunks
 	int start = 0, pos = longestWordLength + 1;
 	while (pos < lineLength) {
-	    //cout << "start " << start << " pos " << pos << endl;
 	    if (line[pos] == ' ') {
-		//cout << "char $" << line[pos] << "$ space found - word $"
-		//    << line.substr(start, pos - start) << "$" << endl;
+		// Check if the chunk between start and (pos - 1) contains the longest word
 		innerTestForLongest(line, start, pos - 1, longestWord, longestWordLength);
+
+		// Set start to character after the found space
 		start = pos + 1;
+		// Stride forward read position to first position that could contain a longest word
 		pos = start + longestWordLength + 1;
 	    } else {
-		//cout << line[pos] << " no space" << endl;
 		pos++;
 	    }
 	}
-	//cout << "after stride loop" << endl;
+
+	// Check if end of line has a longest word
 	if (lineLength - 1 - start > longestWordLength) {
 	    innerTestForLongest(line, start, lineLength - 1, longestWord, longestWordLength);
 	}
