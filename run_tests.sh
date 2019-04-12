@@ -7,7 +7,7 @@ if [ ! -f corpus.txt ]; then
 fi
 
 echo "C++"
-g++ -O3 main.cpp timer.cpp
+g++ -march=native -Ofast -fomit-frame-pointer main.cpp timer.cpp
 ./a.out
 
 echo "Bash"
