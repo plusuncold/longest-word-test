@@ -55,7 +55,7 @@ fn test_for_longest(line: &str, start: usize,
                 longest_word = test_for_longest(line, start, end - 1,
                                                   longest_word, longest_len);
             }
-            longest_word
+            return longest_word
         }
     }
     line.substring(start, end-start+1).to_string()
