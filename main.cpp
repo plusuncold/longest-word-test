@@ -182,14 +182,11 @@ void findLongestWordSimpleOptimized(const vector<string>& text) {
     long lineCount = text.size();
 
     // For every line in the corpus
-#pragma omp parallel for shared(longestWord, longestWordLength)
-    for (int l = 0 ; l < lineCount ; l++) {
-	const string& line = text[l];
+    for (const string& line : text) {
     	int start = 0;
 	const int lineLength = line.size();
 	for (int pos = 0 ; pos < lineLength ; pos++) {
 	    if (line[pos] == ' ') {
-#pragma omp critical
 		if ((pos - start) > longestWordLength) {
 		    longestWord = line.substr(start,pos-start);
 		    longestWordLength = longestWord.length();
@@ -198,7 +195,6 @@ void findLongestWordSimpleOptimized(const vector<string>& text) {
 	    }
 	}
 
-#pragma omp critical
 	if ((lineLength - start) > longestWordLength) {
 	    longestWord = line.substr(start,lineLength-start);
 	    longestWordLength = longestWord.length();
