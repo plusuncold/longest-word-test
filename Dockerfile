@@ -1,5 +1,7 @@
 FROM node:11-alpine
 
+RUN wget https://s3.wasabisys.com/correct-horse-battery-staple/trd/corpus.txt
+
 RUN apk update && apk add \
     bash \
     build-base \
@@ -12,5 +14,4 @@ RUN pip3 install cython
 
 WORKDIR /home
 COPY * /home/
-RUN wget https://s3.wasabisys.com/correct-horse-battery-staple/trd/corpus.txt
 ENTRYPOINT sh /home/run_tests.sh

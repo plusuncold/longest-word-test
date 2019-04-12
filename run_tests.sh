@@ -29,10 +29,3 @@ node --experimental-worker test_stream.js
 
 echo "Golang"
 go run ./timer.go
-
-echo "C#"
-echo "Select parallel"
-dotnet LongestWord.dll corpus.txt
-
-echo "Select non-parallel"
-dotnet LongestWord.dll corpus.txt
