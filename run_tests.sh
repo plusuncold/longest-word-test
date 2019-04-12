@@ -27,5 +27,5 @@ echo "Golang"
 go run ./timer.go
 
 echo "C++"
-g++ -march=native -Ofast -fomit-frame-pointer main.cpp timer.cpp
+g++ -march=native -Ofast -fomit-frame-pointer -fopenmp main.cpp timer.cpp
 ./a.out
