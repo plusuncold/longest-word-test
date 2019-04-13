@@ -6,10 +6,6 @@ if [ ! -f corpus.txt ]; then
     wget https://s3.wasabisys.com/correct-horse-battery-staple/trd/corpus.txt
 fi
 
-echo "C++"
-g++ -O3 main.cpp timer.cpp
-./a.out
-
 echo "Bash"
 ./bash.sh corpus.txt
 
@@ -29,3 +25,7 @@ node --experimental-worker test_stream.js
 
 echo "Golang"
 go run ./timer.go
+
+echo "C++"
+g++ -march=native -Ofast -fomit-frame-pointer -fopenmp main.cpp timer.cpp
+./a.out

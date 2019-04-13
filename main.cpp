@@ -9,39 +9,71 @@
 using namespace std;
 
 void findLongestWord(const vector<string>& text);
+void findLongestWordParallel(const vector<string>& text);
 void findLongestWordSimple(const vector<string>& text);
+void findLongestWordSimpleOptimized(const vector<string>& text);
+void findLongestWordSimpleOptimizedParallel(const vector<string>& text);
 
 int main() {
     string path = "corpus.txt";
     vector<string> text;
     ifstream file(path.c_str());
     string line;
+
+    // Read the file in
     while(getline(file,line)) {
 	text.push_back(line);
     }
     file.close();
 
+    // Run the striding test
     auto id = Timer::timerBegin();
     findLongestWord(text);
     auto timeStriding = Timer::timerEnd(id);
 
+    // Run the striding test (parallel)
+    id = Timer::timerBegin();
+    findLongestWordParallel(text);
+    auto timeStridingParallel = Timer::timerEnd(id);
+    
+    // Run the simple test
     id = Timer::timerBegin();
     findLongestWordSimple(text);
     auto timeSimple = Timer::timerEnd(id);
 
+    // Run the simple test optimized
+    id = Timer::timerBegin();
+    findLongestWordSimpleOptimized(text);
+    auto timeSimpleOpt = Timer::timerEnd(id);
+
+    // Run the simple test optimized (parallel)
+    id = Timer::timerBegin();
+    findLongestWordSimpleOptimizedParallel(text);
+    auto timeSimpleOptParallel = Timer::timerEnd(id);
+
     cout << "Striding: " << timeStriding/1000 << "ms\n"
-	 << "Simple: " << timeSimple/1000 << "ms" << endl;
+	 << "Striding parallel " << timeStridingParallel/1000 << "ms\n"
+	 << "Simple: " << timeSimple/1000 << "ms\n"
+	 << "Simple opt " << timeSimpleOpt/1000 << "ms\n"
+	 << "Simple opt parallel " << timeSimpleOptParallel/1000 << "ms\n"
+	 << endl;
 
     return 0;
 }
 
 void innerTestForLongest(const string& line, const int start, const int end,
 			 string& longestWord, int& longestWordLength) {
+    // Iterate through every character in the range
     for (int index = start ; index <= end ; index++) {
-	//cout << "Is " << line[index] << " a space?" << endl;
+	// If this chunk has a space
 	if (line[index] == ' ') {
+	    // If left chunk could have longest word check it
+	    if (index - start > longestWordLength) {
+		innerTestForLongest(line, start, index - 1, longestWord, longestWordLength);
+	    }
+
+	    // If right chunk could have longest word check it
 	    if (end - (index + 1) > longestWordLength) {
-		//cout << "Searching smaller: $" << line.substr(index+1,end - index) << "$" << endl;
 		innerTestForLongest(line, index+1, end, longestWord, longestWordLength);
 	    }
 	    return;
@@ -49,34 +81,75 @@ void innerTestForLongest(const string& line, const int start, const int end,
     }
 
     // If reached here then the word is continuous and thus the longest word
-    longestWord = line.substr(start,end - start + 1);
-    longestWordLength = end - start + 1;
-    //cout << "Longest word is '" << longestWord << "' length " << longestWordLength << endl;
+#pragma omp critical
+    {
+	if (end - start + 1 > longestWordLength) { // Test incase the longest word has changed
+	    longestWord = line.substr(start,end - start + 1);
+	    longestWordLength = end - start + 1;
+	}
+    }
 }
 
 void findLongestWord(const vector<string>& text) {
     string word, longestWord;
     int longestWordLength = 0;
 
+    // For every line in the corpus
     for (const string& line : text) {
 	const int lineLength = line.size();
-	//cout << "$" << line << "$" << lineLength << endl;
+
 	// Stride along line spliting into longestWordLength chunks
 	int start = 0, pos = longestWordLength + 1;
 	while (pos < lineLength) {
-	    //cout << "start " << start << " pos " << pos << endl;
 	    if (line[pos] == ' ') {
-		//cout << "char $" << line[pos] << "$ space found - word $"
-		//    << line.substr(start, pos - start) << "$" << endl;
+		// Check if the chunk between start and (pos - 1) contains the longest word
 		innerTestForLongest(line, start, pos - 1, longestWord, longestWordLength);
+
+		// Set start to character after the found space
 		start = pos + 1;
+		// Stride forward read position to first position that could contain a longest word
 		pos = start + longestWordLength + 1;
 	    } else {
-		//cout << line[pos] << " no space" << endl;
 		pos++;
 	    }
 	}
-	//cout << "after stride loop" << endl;
+
+	// Check if end of line has a longest word
+	if (lineLength - 1 - start > longestWordLength) {
+	    innerTestForLongest(line, start, lineLength - 1, longestWord, longestWordLength);
+	}
+    }
+
+    cout << "Longest word is '" << longestWord << "' length " << longestWordLength << endl;
+}
+void findLongestWordParallel(const vector<string>& text) {
+    string word, longestWord;
+    int longestWordLength = 0;
+    long lineCount = text.size();
+
+    // For every line in the corpus
+#pragma omp parallel for shared(longestWord, longestWordLength)
+    for (int l = 0 ; l < lineCount ; l++) {
+	const string& line = text[l];
+	const int lineLength = line.size();
+
+	// Stride along line spliting into longestWordLength chunks
+	int start = 0, pos = longestWordLength + 1;
+	while (pos < lineLength) {
+	    if (line[pos] == ' ') {
+		// Check if the chunk between start and (pos - 1) contains the longest word
+		innerTestForLongest(line, start, pos - 1, longestWord, longestWordLength);
+
+		// Set start to character after the found space
+		start = pos + 1;
+		// Stride forward read position to first position that could contain a longest word
+		pos = start + longestWordLength + 1;
+	    } else {
+		pos++;
+	    }
+	}
+
+	// Check if end of line has a longest word
 	if (lineLength - 1 - start > longestWordLength) {
 	    innerTestForLongest(line, start, lineLength - 1, longestWord, longestWordLength);
 	}
@@ -99,6 +172,64 @@ void findLongestWordSimple(const vector<string>& text) {
 		longestWordLength = word.length();
 	    }
 	} while (iss);
+    }
+    cout << "Longest word is '" << longestWord << "' length " << longestWordLength << endl;
+}
+
+void findLongestWordSimpleOptimized(const vector<string>& text) {
+    string longestWord;
+    int longestWordLength = 0;
+    long lineCount = text.size();
+
+    // For every line in the corpus
+    for (const string& line : text) {
+    	int start = 0;
+	const int lineLength = line.size();
+	for (int pos = 0 ; pos < lineLength ; pos++) {
+	    if (line[pos] == ' ') {
+		if ((pos - start) > longestWordLength) {
+		    longestWord = line.substr(start,pos-start);
+		    longestWordLength = longestWord.length();
+		}
+		start = pos + 1;
+	    }
+	}
+
+	if ((lineLength - start) > longestWordLength) {
+	    longestWord = line.substr(start,lineLength-start);
+	    longestWordLength = longestWord.length();
+	}
+    }
+    cout << "Longest word is '" << longestWord << "' length " << longestWordLength << endl;
+}
+
+void findLongestWordSimpleOptimizedParallel(const vector<string>& text) {
+    string longestWord;
+    int longestWordLength = 0;
+    long lineCount = text.size();
+
+    // For every line in the corpus
+#pragma omp parallel for shared(longestWord, longestWordLength)
+    for (int l = 0 ; l < lineCount ; l++) {
+	const string& line = text[l];
+    	int start = 0;
+	const int lineLength = line.size();
+	for (int pos = 0 ; pos < lineLength ; pos++) {
+	    if (line[pos] == ' ') {
+#pragma omp critical
+		if ((pos - start) > longestWordLength) {
+		    longestWord = line.substr(start,pos-start);
+		    longestWordLength = longestWord.length();
+		}
+		start = pos + 1;
+	    }
+	}
+
+#pragma omp critical
+	if ((lineLength - start) > longestWordLength) {
+	    longestWord = line.substr(start,lineLength-start);
+	    longestWordLength = longestWord.length();
+	}
     }
     cout << "Longest word is '" << longestWord << "' length " << longestWordLength << endl;
 }
