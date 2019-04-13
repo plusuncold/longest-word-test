@@ -19,25 +19,25 @@ Write your solution, add your name to the top, and send a pull request. It would
 
 ### Single-Threaded
 
-| Name             | Language   | Time (ms) | Notes                   |
-|------------------|------------|-----------|-------------------------|
-| @dnesbitt03qub   | C++        | 104       | Striding implementation | 
-| @pard68          | Rust       | 311       |                         |
-| Jeffrey Corcoran | C#         | 810       |                         |
-| @bbriggs         | Go         | 997       |                         |
-| @drewpearce      | Cython     | 1137      | Loop w/ longest         |
-| @dnesbitt03qub   | C++        | 1159      |                         |
-| @zombeej         | JavaScript | 1292      |                         |
-| @pard68          | Bash       | 1892      |                         |
-| @specs           | Python     | 2250      | Loop w/ longest         |
-| @specs           | Python     | 2656      | Comprehensions          |
-| @specs           | Python     | 3091      | Loop and sort           |
+| Name             | Language   | Time (ms) | Notes                                |
+|------------------|------------|-----------|--------------------------------------|
+| @dnesbitt03qub   | C++        | 319       | Striding implementation              |
+| @pard68          | Rust       | 1041      |                                      |
+| Jeffrey Corcoran | C#         | 2275      |                                      |
+| @bbriggs         | Go         | 2849      |                                      |
+| @zombeej         | JavaScript | 3941      |                                      |
+| @drewpearce      | Cython     | 6581      | Loop w/ longest                      |
+| @specs           | Python     | 12245     | Comprehensions                       |
+| @specs           | Python     | 14444     | Loop and sort                        |
+| @specs           | Python     | 16257     | Loop w/ longest                      |
+| @pard68          | Bash       | ~5543     | Native speed - Not running in Docker |
 
 
 ### Concurrent
-| Name             | Language   | Time (ms) | Notes                   |
-|------------------|------------|-----------|-------------------------|
-| Jeffrey Corcoran | C#         | 266       |                         | 
+| Name             | Language | Time (ms) | Notes    |
+|------------------|----------|-----------|----------|
+| @dnesbitt03qub   | C++      | 59        | Striding |
+| Jeffrey Corcoran | C#       | 716       |          |
 
 
 ### Methodology
