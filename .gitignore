@@ -13,3 +13,4 @@ test_cython.c
 obj/*
 sbytetest*
 ssimpletest*
+mfind_longest
