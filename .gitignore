@@ -14,3 +14,4 @@ obj/*
 sbytetest*
 ssimpletest*
 mfind_longest
+find_longest_word/target

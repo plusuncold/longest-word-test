@@ -137,6 +137,23 @@ pub fn Single() {
     println!("Longest word is '{}' with a length of {} characters.", words[0], words[0].len());
     println!("It took {} milliseconds to find this word.", seconds);
 
+    let filename = env::args().nth(1).unwrap();
+    let file: std::string::String = fs::read_to_string(filename).expect("");
+
+    let start = time::Instant::now();
+
+    //Very fast. Don't compare to other things.
+    //Make keys == to len of string and then return the max key
+    //unwrap it and profit!
+    let longest = file.split_whitespace().max_by_key(|word| word.len()).unwrap();
+
+    let elapsed = start.elapsed();
+    let seconds = ((elapsed.as_secs() as f64) + (elapsed.subsec_nanos() as f64 / 1_000_000_000.0)) * 1000.0;
+
+    println!("'Pythonic Too':");
+    println!("Longest word is '{}' with a length of {} characters.", longest, longest.len());
+    println!("It took {} milliseconds to find this word.", seconds);
+
     //See lines 71 through 81 above for why I am re-reallocating `filename` and `file`
     let filename = env::args().nth(1).unwrap();
     let file: String = fs::read_to_string(filename).expect("Bummer, man!");
