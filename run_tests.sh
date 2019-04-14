@@ -17,8 +17,8 @@ python3 setup.py build_ext --inplace
 python3 run_cythoned_test.py
 
 echo "Rust"
-rustc -O find_longest.rs
-./find_longest corpus.txt
+rustc -O sfind_longest.rs
+./sfind_longest corpus.txt
 
 echo "JS"
 node --experimental-worker test_stream.js
