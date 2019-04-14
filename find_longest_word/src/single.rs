@@ -90,22 +90,18 @@ fn get_longest(words: std::str::SplitWhitespace) -> std::string::String {
     longest_word
 }
 
-pub fn Single() {
+pub fn single() {
     //get $1 from sys
     let filename = env::args().nth(1).unwrap();
     //read argv as a string
     let file: std::string::String = fs::read_to_string(filename).expect("");
     //use the string method `split_whitespace()` to split each word in string into an iterator
     let words = file.split_whitespace();
-
     let start = time::Instant::now();
-    let results = get_longest(words);
+    let result = get_longest(words);
     let elapsed = start.elapsed();
     let seconds = ((elapsed.as_secs() as f64) + (elapsed.subsec_nanos() as f64 / 1_000_000_000.0)) * 1000.0;
-
-    println!("Simple:");
-    println!("Longest word is '{}' with a length of {} characters.", results, results.len());
-    println!("It took {} milliseconds to find this word.", seconds);
+    println!("Simple: Found {} in {} milliseconds.", result, seconds);
 
     //Tried to find an elegant way to get around the below but due to ownership
     //and `std::str::SplitWhitespace` not being well documented to allocate an
@@ -119,9 +115,7 @@ pub fn Single() {
     //Long live the jankiness!
     let filename = env::args().nth(1).unwrap();
     let file: std::string::String = fs::read_to_string(filename).expect("");
-
     let start = time::Instant::now();
-
     //My pythonic-esque solution
     //Create a Vec of the words, then sort words by length.
     //The answer will be the 0th word in the Vec.
@@ -129,30 +123,20 @@ pub fn Single() {
     //increase speed but this was just a fun solution so I didn't bother
     let mut words: Vec<_> = file.split_whitespace().collect();
     words.sort_by(|a, b| b.len().cmp(&a.len()));
-
     let elapsed = start.elapsed();
     let seconds = ((elapsed.as_secs() as f64) + (elapsed.subsec_nanos() as f64 / 1_000_000_000.0)) * 1000.0;
-
-    println!("'Pythonic':");
-    println!("Longest word is '{}' with a length of {} characters.", words[0], words[0].len());
-    println!("It took {} milliseconds to find this word.", seconds);
+    println!("'Pythonic': Found {} in {} milliseconds.", words[0], seconds);
 
     let filename = env::args().nth(1).unwrap();
     let file: std::string::String = fs::read_to_string(filename).expect("");
-
     let start = time::Instant::now();
-
     //Very fast. Don't compare to other things.
-    //Make keys == to len of string and then return the max key
+    //Make `keys == word.len()` and then return the value of max key
     //unwrap it and profit!
-    let longest = file.split_whitespace().max_by_key(|word| word.len()).unwrap();
-
+    let result = file.split_whitespace().max_by_key(|word| word.len()).unwrap();
     let elapsed = start.elapsed();
     let seconds = ((elapsed.as_secs() as f64) + (elapsed.subsec_nanos() as f64 / 1_000_000_000.0)) * 1000.0;
-
-    println!("'Pythonic Too':");
-    println!("Longest word is '{}' with a length of {} characters.", longest, longest.len());
-    println!("It took {} milliseconds to find this word.", seconds);
+    println!("HashTable Lookup: Found {} in {} milliseconds.", result, seconds);
 
     //See lines 71 through 81 above for why I am re-reallocating `filename` and `file`
     let filename = env::args().nth(1).unwrap();
@@ -160,15 +144,9 @@ pub fn Single() {
     //The above was a `BufReader` but by loading to heap instead of streaming 
     //this became an entire 1000ms faster. irc said heap would be quicker, guess
     //they were right.
-
     let start = time::Instant::now();
-
     let result = striding_longest(file);
-
     let elapsed = start.elapsed();
     let seconds = ((elapsed.as_secs() as f64) + (elapsed.subsec_nanos() as f64 / 1_000_000_000.0)) * 1000.0;
-
-    println!("Striding:");
-    println!("Longest word is '{}' with a length of {} characters.", result, result.len());
-    println!("It took {} milliseconds to find this word.", seconds);
+    println!("Striding: Found {} in {} milliseconds.", result, seconds);
 }

@@ -3,7 +3,11 @@ mod multi;
 
 fn main() {
     println!("Single threaded solutions:");
-    single::Single();
+    println!("--------------------------");
+    single::single();
+    println!("");
     println!("Multi threaded solutions");
-    multi::Multi();
+    println!("--------------------------");
+    multi::multi();
+    println!("");
 }

@@ -92,7 +92,7 @@ use rayon::prelude::*;
 //    longest_word
 //}
 
-pub fn Multi() {
+pub fn multi() {
     ////get $1 from sys
     //let filename = env::args().nth(1).unwrap();
     ////read argv as a string
@@ -121,9 +121,7 @@ pub fn Multi() {
     //Long live the jankiness!
     let filename = env::args().nth(1).unwrap();
     let file: std::string::String = fs::read_to_string(filename).expect("");
-
     let start = time::Instant::now();
-
     //My pythonic-esque solution
     //Create a Vec of the words, then sort words by length.
     //The answer will be the 0th word in the Vec.
@@ -131,32 +129,22 @@ pub fn Multi() {
     //increase speed but this was just a fun solution so I didn't bother
     let mut words: Vec<_> = file.par_split_whitespace().collect();
     words.par_sort_by(|a, b| b.len().cmp(&a.len()));
-
     let elapsed = start.elapsed();
     let seconds = ((elapsed.as_secs() as f64) + (elapsed.subsec_nanos() as f64 / 1_000_000_000.0)) * 1000.0;
-
-    println!("'Pythonic':");
-    println!("Longest word is '{}' with a length of {} characters.", words[0], words[0].len());
-    println!("It took {} milliseconds to find this word.", seconds);
-
+    println!("'Pythonic': Found {} in {} milliseconds", words[0], seconds);
     let filename = env::args().nth(1).unwrap();
     let file: std::string::String = fs::read_to_string(filename).expect("");
 
     let start = time::Instant::now();
-
     //My other pythonic-esque solution
     //This one is FAST!
     //use the parallel `split_whitespace` in rayon
     //use `max` to get the largest `len`, this way we avoid the `cmp` 
     //which is where we are losing all the time. `unwrap` into a string and profit
-    let longest = file.par_split_whitespace().max_by_key(|word| word.len()).unwrap();
-
+    let result = file.par_split_whitespace().max_by_key(|word| word.len()).unwrap();
     let elapsed = start.elapsed();
     let seconds = ((elapsed.as_secs() as f64) + (elapsed.subsec_nanos() as f64 / 1_000_000_000.0)) * 1000.0;
-
-    println!("'Pythonic Too':");
-    println!("Longest word is '{}' with a length of {} characters.", longest, longest.len());
-    println!("It took {} milliseconds to find this word.", seconds);
+    println!("HashTable Lookup: Found {} in {} milliseconds", result, seconds);
 
     ////See lines 71 through 81 above for why I am re-reallocating `filename` and `file`
     //let filename = env::args().nth(1).unwrap();
