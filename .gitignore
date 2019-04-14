@@ -11,3 +11,4 @@ test.cpython*
 test_cython.cpython*
 test_cython.c
 obj/*
+bytetest*
