@@ -16,3 +16,5 @@ ssimpletest*
 mfind_longest
 find_longest_word/target/*
 results.dat
+.#*
+find_longest

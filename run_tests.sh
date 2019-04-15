@@ -19,7 +19,7 @@ python3 run_cythoned_test.py
 echo "Rust"
 cd ./find_longest_word/
 cargo build --release
-./target/release/find_longest_word ../corpus.txt
+./target/release/find_longest_word corpus.txt
 cd ..
 
 echo "JS"
