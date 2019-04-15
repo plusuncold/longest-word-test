@@ -4,10 +4,15 @@ a.out
 corpus.txt
 *.bak
 report.*.json
-find_longest
+sfind_longest
 timer_linux_amd64
 build/*
 test.cpython*
 test_cython.cpython*
 test_cython.c
 obj/*
+sbytetest*
+ssimpletest*
+mfind_longest
+find_longest_word/target/*
+results.dat

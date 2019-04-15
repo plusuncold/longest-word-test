@@ -9,7 +9,8 @@ RUN apk update && apk add \
     go \
     python3 \
     python3-dev \
-    rust
+    rustc \
+	cargo
 
 RUN pip3 install cython
 
