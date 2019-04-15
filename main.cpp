@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <omp.h>
 
 #include "timer.h"
 
@@ -87,7 +88,6 @@ void innerTestForLongest(const string& line, const int start, const int end, con
     }
 
     // If reached here then the word is continuous and thus the longest word
-#pragma omp critical
     {
 	if (end - start + 1 > longestWord.length) { // Test incase the longest word has changed
 	    longestWord.start = start;
@@ -143,34 +143,51 @@ void findLongestWordParallel(const vector<string>& text) {
     lw longestWord;
     longestWord.length = 0;
     long lineCount = text.size();
-
+    const short threadCount = omp_get_max_threads();
+    
     // For every line in the corpus
 #pragma omp parallel for shared(longestWord)
-    for (int l = 0 ; l < lineCount ; l++) {
-	const string& line = text[l];
-	const int lineLength = line.size();
-
-	// Stride along line spliting into longestWordLength chunks
-	int start = 0, pos = longestWord.length + 1;
-	int posStart = (pos < lineLength) ? pos : lineLength - 1;
-	while (pos < lineLength) {
-	    if (line[pos] == ' ') {
-		// Check if the chunk between start and (pos - 1) contains the longest word
-		innerTestForLongest(line, start, pos - 1, posStart, l, longestWord);
-
-		// Set start to character after the found space
-		start = pos + 1;
-		// Stride forward read position to first position that could contain a longest word
-		pos = start + longestWord.length + 1;
-		posStart = (pos < lineLength) ? pos : lineLength - 1;
-	    } else {
-		pos++;
+    for (int t = 0 ; t < threadCount ; t++) {
+	lw localLongestWord;
+	localLongestWord.length = 0;
+	const int lStart = lineCount * omp_get_thread_num() / threadCount;
+	const int lEnd = lineCount * (omp_get_thread_num() + 1) / threadCount - 1;
+	
+	for (int l = lStart ; l <= lEnd && l < lineCount ; l++) {
+	    const string& line = text[l];
+	    const int lineLength = line.size();
+	    
+	    // Stride along line spliting into longestWordLength chunks
+	    int start = 0, pos = localLongestWord.length + 1;
+	    int posStart = (pos < lineLength) ? pos : lineLength - 1;
+	    while (pos < lineLength) {
+		if (line[pos] == ' ') {
+		    // Check if the chunk between start and (pos - 1) contains the longest word
+		    innerTestForLongest(line, start, pos - 1, posStart, l, localLongestWord);
+		    
+		    // Set start to character after the found space
+		    start = pos + 1;
+		    // Stride forward read position to first position that could contain a longest word
+		    pos = start + localLongestWord.length + 1;
+		    posStart = (pos < lineLength) ? pos : lineLength - 1;
+		} else {
+		    pos++;
+		}
+	    }
+	    
+	    // Check if end of line has a longest word
+	    if (lineLength - 1 - start > localLongestWord.length) {
+		innerTestForLongest(line, start, lineLength - 1, posStart, l, localLongestWord);
 	    }
 	}
 
-	// Check if end of line has a longest word
-	if (lineLength - 1 - start > longestWord.length) {
-	    innerTestForLongest(line, start, lineLength - 1, posStart, l, longestWord);
+#pragma omp critical
+	{
+	    if (localLongestWord.length > longestWord.length) {
+		longestWord.length = localLongestWord.length;
+		longestWord.lineNumber = localLongestWord.lineNumber;
+		longestWord.start = localLongestWord.start;
+	    }
 	}
     }
 
