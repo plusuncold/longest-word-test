@@ -15,6 +15,9 @@ python3 test.py
 echo "Ruby"
 ruby test.rb
 
+echo "JRuby"
+jruby -J-Xmx15G test.jrb
+
 echo "Cython"
 python3 setup.py build_ext --inplace
 python3 run_cythoned_test.py
