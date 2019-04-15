@@ -5,6 +5,7 @@
 # Convert text to an array to avoid UTF-8 complexity.
 puts("Reading file.")
 text = File.read('corpus.txt')
+puts("done.")
 
 def word_boundary?(arr, i) 
   case arr[i] 
@@ -39,11 +40,14 @@ def find_shortest(text)
       new_longest = true
 
       # Check backwards. If found before len, rewind to that and step.
-      len.times do |back_i|
+      back_i = 0
+      while back_i < len do
+      #len.times do |back_i|
         if word_boundary?(text, i - back_i)
           new_longest = false
           break
         end
+	back_i += 1
       end
 
       if new_longest
