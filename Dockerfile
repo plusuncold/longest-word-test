@@ -16,5 +16,5 @@ RUN apk update && apk add \
 
 RUN pip3 install cython
 
-COPY * /home/
+COPY . /home/
 ENTRYPOINT sh /home/run_tests.sh

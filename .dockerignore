@@ -1,0 +1,7 @@
+# Ignore the root Dockerfile
+Dockerfile
+.dockerignore
+.git*
+
+README.md
+LICENSE
