@@ -29,8 +29,10 @@ Write your solution, add your name to the top, and send a pull request. It would
 | @zombeej         | JavaScript | 3941      |                                      |
 | @drewpearce      | Cython     | 6581      | Loop w/ longest                      |
 | @specs           | Python     | 12245     | Comprehensions                       |
+| @samwi           | JRuby      | 13565     |                                      |
 | @specs           | Python     | 14444     | Loop and sort                        |
 | @specs           | Python     | 16257     | Loop w/ longest                      |
+| @samwi           | Ruby       | 24383     |                                      |
 | @pard68          | Bash       | ~5543     | Native speed - Not running in Docker |
 
 
