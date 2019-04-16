@@ -17,9 +17,20 @@ void findLongestWordSimple(const vector<string>& text);
 void findLongestWordSimpleOptimized(const vector<string>& text);
 void findLongestWordSimpleOptimizedParallel(const vector<string>& text);
 
-int main() {
-    string path = "corpus.txt";
+int main(int argc, char *argv[]) {
+    if (argc > 2) {
+	cout << "Requires corpus locations" << endl;
+	exit(0);
+    }
+    string path(argv[1]);
+    
     ifstream file(path.c_str());
+
+    if (!file.is_open()) {
+	cout << "No file at: " << path << endl;
+	exit(-1);
+    }
+    
     stringstream buffer;
     buffer << file.rdbuf();
     string text(buffer.str());

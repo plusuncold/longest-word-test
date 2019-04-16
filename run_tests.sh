@@ -32,8 +32,10 @@ echo "Golang"
 go run ./timer.go
 
 echo "C++"
-g++ -march=native -Ofast -fomit-frame-pointer -fopenmp main.cpp timer.cpp
-./a.out
+cd cpp
+./build_test_docker.sh
+./run_test_docker.sh
+cd ..
 
 echo "Ruby"
 ruby test.rb
