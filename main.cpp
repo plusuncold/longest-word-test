@@ -7,24 +7,22 @@
 
 #include "timer.h"
 
+#define CHECK_BIT(var,pos) !!((var) & (1<<(pos)))
+
 using namespace std;
 
-void findLongestWord(const vector<string>& text);
-void findLongestWordParallel(const vector<string>& text);
+void findLongestWord(const string& text);
+//void findLongestWordParallel(const string& text);
 void findLongestWordSimple(const vector<string>& text);
 void findLongestWordSimpleOptimized(const vector<string>& text);
 void findLongestWordSimpleOptimizedParallel(const vector<string>& text);
 
 int main() {
     string path = "corpus.txt";
-    vector<string> text;
     ifstream file(path.c_str());
-    string line;
-
-    // Read the file in
-    while(getline(file,line)) {
-	text.push_back(line);
-    }
+    stringstream buffer;
+    buffer << file.rdbuf();
+    string text(buffer.str());
     file.close();
 
     // Run the striding test
@@ -34,7 +32,7 @@ int main() {
 
     // Run the striding test (parallel)
     id = Timer::timerBegin();
-    findLongestWordParallel(text);
+    //findLongestWordParallel(text);
     auto timeStridingParallel = Timer::timerEnd(id);
     
     // Run the simple test
@@ -62,87 +60,79 @@ int main() {
     return 0;
 }
 
-struct lw {
-    int start;
-    int lineNumber;
-    int length;
-};
+inline bool isDelimiter(const string& text, const long pos) {
+    if (CHECK_BIT(text[pos],6)) return false;
+    if (text[pos] == ' ') return true;
+    if (text[pos] == '\n') return true;
+    return false;
+}
 
-void innerTestForLongest(const string& line, const int start, const int end, const int posStart, const int lineNumber, lw& longestWord) {
+void innerTestForLongest(const string& text, const long start, const long end, const long posStart, long& longestWordStart, int& longestWordLength) {
 
     // Iterate through every character in the range
     for (int index = start ; index < posStart ; index++) {
 	// If this chunk has a space
-	if (line[index] == ' ') {
+	if (isDelimiter(text,index)) {
 	    // If left chunk could have longest word check it
-	    if (index - start > longestWord.length) {
-		innerTestForLongest(line, start, index - 1, index - 1, lineNumber, longestWord);
+	    if (index - start > longestWordLength) {
+		innerTestForLongest(text, start, index - 1, index - 1, longestWordStart, longestWordLength);
 	    }
 
 	    // If right chunk could have longest word check it
-	    if (end - (index + 1) > longestWord.length) {
-		innerTestForLongest(line, index+1, end, posStart, lineNumber, longestWord);
+	    if (end - (index + 1) > longestWordLength) {
+		innerTestForLongest(text, index+1, end, posStart, longestWordStart, longestWordLength);
 	    }
 	    return;
 	}
     }
 
     // If reached here then the word is continuous and thus the longest word
-    {
-	if (end - start + 1 > longestWord.length) { // Test incase the longest word has changed
-	    longestWord.start = start;
-	    longestWord.length = end - start + 1;
-	    longestWord.lineNumber = lineNumber;
-	}
-    }
+    longestWordStart = start;
+    longestWordLength = end - start + 1;
 }
 
-void findLongestWord(const vector<string>& text) {
+void findLongestWord(const string& text) {
     string word;
-    lw longestWord;
-    longestWord.length = 0;
-    int lineCount = text.size();
+    long longestWordStart = 0;
+    int longestWordLength = 0;
 
-    // For every line in the corpus
-    for (int l = 0 ; l < lineCount ; l++) {
-	const string& line = text[l];
-	const int lineLength = line.size();
-
-	// Stride along line spliting into longestWordLength chunks
-	int start = 0, pos = longestWord.length + 1;
-	int posStart = (pos < lineLength) ? pos : lineLength - 1;
-	while (pos < lineLength) {
-	    if (line[pos] == ' ') {
-		// Check if the chunk between start and (pos - 1) contains the longest word
-		innerTestForLongest(line, start, pos - 1, posStart, l, longestWord);
-
-		// Set start to character after the found space
-		start = pos + 1;
-		// Stride forward read position to first position that could contain a longest word
-		pos = start + longestWord.length + 1;
-		posStart = (pos < lineLength) ? pos : lineLength - 1;
-	    } else {
-		pos++;
-	    }
-	}
-
-	// Check if end of line has a longest word
-	if (lineLength - 1 - start > longestWord.length) {
-	    innerTestForLongest(line, start, lineLength - 1, posStart, l, longestWord);
+    const int textLength = text.size();
+    
+    // Stride along text spliting into longestWordLength chunks
+    int start = 0, pos = longestWordLength + 1;
+    int posStart = (pos < textLength) ? pos : textLength - 1;
+    while (pos < textLength) {
+	if (isDelimiter(text,pos)) {
+	    // Check if the chunk between start and (pos - 1) contains the longest word
+	    innerTestForLongest(text, start, pos - 1, posStart, longestWordStart, longestWordLength);
+	    
+	    // Set start to character after the found space
+	    start = pos + 1;
+	    // Stride forward read position to first position that could contain a longest word
+	    pos = start + longestWordLength + 1;
+	    posStart = (pos < textLength) ? pos : textLength - 1;
+	} else {
+	    pos++;
 	}
     }
-
-    const string& longestWordLine = text[longestWord.lineNumber];
+    
+    // Check if end of line has a longest word
+    if (textLength - 1 - start > longestWordLength) {
+	innerTestForLongest(text, start, textLength - 1, posStart, longestWordStart, longestWordLength);
+    }
+    
     cout << "Longest word is '";
-    for (int pos = longestWord.start ; pos < longestWord.start + longestWord.length ; pos++)
-	cout << longestWordLine[pos];
-    cout << "' length " << longestWord.length << "\n";
+    for (int pos = longestWordStart ; pos < longestWordStart + longestWordLength ; pos++)
+	cout << text[pos];
+    cout << "' length " << longestWordLength << "\n";
 }
-void findLongestWordParallel(const vector<string>& text) {
+
+/*
+void findLongestWordParallel(const string& text) {
     string word;
-    lw longestWord;
-    longestWord.length = 0;
-    long lineCount = text.size();
+    long longestWordStart = 0;
+    int longestWordLength = 0;
+    long textLength = text.size();
     const short threadCount = omp_get_max_threads();
     
     // For every line in the corpus
@@ -197,6 +187,7 @@ void findLongestWordParallel(const vector<string>& text) {
 	cout << longestWordLine[pos];
     cout << "' length " << longestWord.length << "\n";
 }
+*/
 
 void findLongestWordSimple(const vector<string>& text) {
     string word, longestWord;
