@@ -12,9 +12,6 @@ echo "Bash"
 echo "Python"
 python3 test.py
 
-echo "Ruby"
-ruby test.rb
-
 echo "JRuby"
 jruby -J-Xmx15G test.jrb
 
@@ -37,3 +34,6 @@ go run ./timer.go
 echo "C++"
 g++ -march=native -Ofast -fomit-frame-pointer -fopenmp main.cpp timer.cpp
 ./a.out
+
+echo "Ruby"
+ruby test.rb
