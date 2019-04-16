@@ -21,7 +21,7 @@ Write your solution, add your name to the top, and send a pull request. It would
 
 | Name             | Language   | Time (ms) | Notes                                |
 |------------------|------------|-----------|--------------------------------------|
-| @dnesbitt03qub   | C++        | 319       | Striding implementation              |
+| @dnesbitt03qub   | C++        | 477       | Striding implementation              |
 | @pard68          | Rust       | 1041      |                                      |
 | @pard68          | Rust       | 1083      | HashTable                            |
 | Jeffrey Corcoran | C#         | 2275      |                                      |
@@ -39,7 +39,6 @@ Write your solution, add your name to the top, and send a pull request. It would
 ### Concurrent
 | Name             | Language | Time (ms) | Notes     |
 |------------------|----------|-----------|-----------|
-| @dnesbitt03qub   | C++      | 59        | Striding  |
 | @pard68          | Rust     | 164       | HashTable |
 | Jeffrey Corcoran | C#       | 716       |           |
 
