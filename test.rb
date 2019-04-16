@@ -23,10 +23,10 @@ def word_boundary?(arr, i)
 end
 
 def time_this(&call)
-  start_time = Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond)
+  start_time = Time.now
   call.call()
-  stop_time = Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond)
-  puts("time #{(stop_time - start_time) / 1000000.0}ms")
+  stop_time = Time.now
+  puts("time #{(stop_time - start_time) * 1000}ms")
 end
 
 
@@ -42,7 +42,6 @@ def find_shortest(text)
       # Check backwards. If found before len, rewind to that and step.
       back_i = 0
       while back_i < len do
-      #len.times do |back_i|
         if word_boundary?(text, i - back_i)
           new_longest = false
           break
@@ -57,7 +56,8 @@ def find_shortest(text)
         end
         len = i - loc
       else
-        i += len
+        # i += len
+	i = i - back_i
       end
 
     end
