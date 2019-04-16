@@ -33,8 +33,8 @@ go run ./timer.go
 
 echo "C++"
 cd cpp
-./build_test_docker.sh
-./run_test_docker.sh
+./build_test.sh
+./run_test.sh
 cd ..
 
 echo "Ruby"
