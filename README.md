@@ -22,13 +22,13 @@ Write your solution, add your name to the top, and send a pull request. It would
 | Name             | Language   | Time (ms) | Notes                                |
 |------------------|------------|-----------|--------------------------------------|
 | @dnesbitt03qub   | C++        | 477       | Striding implementation              |
-| @pard68          | Rust       | 1107      | Simple                               |
-| @pard68          | Rust       | 1103      | HashTable                            |
+| @pard68          | Rust       | 1066      | Simple                               |
+| @pard68          | Rust       | 1069      | HashTable                            |
 | Jeffrey Corcoran | C#         | 2275      |                                      |
 | @bbriggs         | Go         | 2849      |                                      |
 | @zombeej         | JavaScript | 3941      |                                      |
-| @pard68          | Rust       | 4021      | Pythonic                             |
-| @pard68          | Rust       | 5814      | Striding                             |
+| @pard68          | Rust       | 4033      | Pythonic                             |
+| @pard68          | Rust       | 5760      | Striding                             |
 | @drewpearce      | Cython     | 6581      | Loop w/ longest                      |
 | @specs           | Python     | 12245     | Comprehensions                       |
 | @samwi           | JRuby      | 13565     |                                      |
@@ -41,9 +41,9 @@ Write your solution, add your name to the top, and send a pull request. It would
 ### Concurrent
 | Name             | Language | Time (ms) | Notes             |
 |------------------|----------|-----------|-------------------|
-| @pard68          | Rust     | 198       | HashTable         |
+| @pard68          | Rust     | 197       | HashTable         |
 | Jeffrey Corcoran | C#       | 716       |                   |
-| @pard68          | Rust     | 2027      | Pythonic          |
+| @pard68          | Rust     | 2016      | Pythonic          |
 | @samwi           | JRuby    | 4679      | 'Multithread 16.' |
 | @samwi           | Ruby     | 55339     | 'Multithread 8.'  |
 
