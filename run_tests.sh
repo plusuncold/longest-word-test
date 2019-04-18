@@ -13,7 +13,7 @@ echo "Python"
 python3 test.py
 
 echo "JRuby"
-jruby -J-Xmx15G test.jrb
+jruby -J-Xmx15G test.rb
 
 echo "Cython"
 python3 setup.py build_ext --inplace
