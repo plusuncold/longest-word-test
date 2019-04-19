@@ -7,15 +7,15 @@
 
 #include "timer.h"
 
-#define CHECK_BIT(var,pos) !!((var) & (1<<(pos)))
-
 using namespace std;
+
+constexpr short ITERATION_COUNT = 10;
 
 void findLongestWord(const string& text);
 //void findLongestWordParallel(const string& text);
-void findLongestWordSimple(const vector<string>& text);
-void findLongestWordSimpleOptimized(const vector<string>& text);
-void findLongestWordSimpleOptimizedParallel(const vector<string>& text);
+void findLongestWordSimple(const string& text);
+void findLongestWordSimpleOptimized(const string& text);
+//void findLongestWordSimpleOptimizedParallel(const string& text);
 
 int main(int argc, char *argv[]) {
     if (argc > 2) {
@@ -38,8 +38,11 @@ int main(int argc, char *argv[]) {
 
     // Run the striding test
     auto id = Timer::timerBegin();
-    findLongestWord(text);
+    for (short iteration = 0 ; iteration < ITERATION_COUNT ; iteration++) {
+	findLongestWord(text);
+    }
     auto timeStriding = Timer::timerEnd(id);
+    timeStriding /= ITERATION_COUNT;
 
     // Run the striding test (parallel)
     id = Timer::timerBegin();
@@ -48,34 +51,30 @@ int main(int argc, char *argv[]) {
     
     // Run the simple test
     id = Timer::timerBegin();
-    //findLongestWordSimple(text);
+    findLongestWordSimple(text);
     auto timeSimple = Timer::timerEnd(id);
 
     // Run the simple test optimized
     id = Timer::timerBegin();
-    //findLongestWordSimpleOptimized(text);
+    for (short iteration = 0 ; iteration < ITERATION_COUNT ; iteration++) {
+	findLongestWordSimpleOptimized(text);
+    }
     auto timeSimpleOpt = Timer::timerEnd(id);
-
+    timeSimpleOpt /= ITERATION_COUNT;
+    
     // Run the simple test optimized (parallel)
     id = Timer::timerBegin();
     //findLongestWordSimpleOptimizedParallel(text);
     auto timeSimpleOptParallel = Timer::timerEnd(id);
 
     cout << "Striding: " << timeStriding/1000 << "ms\n"
-	 << "Striding parallel " << timeStridingParallel/1000 << "ms\n"
-       //<< "Simple: " << timeSimple/1000 << "ms\n"
-       //<< "Simple opt " << timeSimpleOpt/1000 << "ms\n"
+	//<< "Striding parallel " << timeStridingParallel/1000 << "ms\n"
+	 << "Simple: " << timeSimple/1000 << "ms\n"
+	<< "Simple opt " << timeSimpleOpt/1000 << "ms\n"
        //<< "Simple opt parallel " << timeSimpleOptParallel/1000 << "ms\n"
 	 << endl;
 
     return 0;
-}
-
-inline bool isDelimiter(const string& text, const long pos) {
-    if (CHECK_BIT(text[pos],6)) return false;
-    if (text[pos] == ' ') return true;
-    if (text[pos] == '\n') return true;
-    return false;
 }
 
 void innerTestForLongest(const string& text, const long start, const long end, const long posStart, long& longestWordStart, int& longestWordLength) {
@@ -83,7 +82,7 @@ void innerTestForLongest(const string& text, const long start, const long end, c
     // Iterate through every character in the range
     for (int index = start ; index < posStart ; index++) {
 	// If this chunk has a space
-	if (isDelimiter(text,index)) {
+	if (text[index] == ' ' || text[index] == '\n') {
 	    // If left chunk could have longest word check it
 	    if (index - start > longestWordLength) {
 		innerTestForLongest(text, start, index - 1, index - 1, longestWordStart, longestWordLength);
@@ -113,7 +112,7 @@ void findLongestWord(const string& text) {
     int start = 0, pos = longestWordLength + 1;
     int posStart = (pos < textLength) ? pos : textLength - 1;
     while (pos < textLength) {
-	if (isDelimiter(text,pos)) {
+	if (text[pos] == ' ' || text[pos] == '\n') {
 	    // Check if the chunk between start and (pos - 1) contains the longest word
 	    innerTestForLongest(text, start, pos - 1, posStart, longestWordStart, longestWordLength);
 	    
@@ -200,51 +199,47 @@ void findLongestWordParallel(const string& text) {
 }
 */
 
-void findLongestWordSimple(const vector<string>& text) {
+void findLongestWordSimple(const string& text) {
     string word, longestWord;
     int longestWordLength = 0;
 
-    for (const string& line : text) {
-	istringstream iss(line);
-	string word;
-	do {
-	    iss >> word;
-	    if (word.length() > longestWordLength) {
-		longestWord = word;
-		longestWordLength = word.length();
-	    }
-	} while (iss);
-    }
+    istringstream iss(text);
+    do {
+	iss >> word;
+	if (word.length() > longestWordLength) {
+	    longestWord = word;
+	    longestWordLength = word.length();
+	}
+    } while (iss);
+
     cout << "Longest word is '" << longestWord << "' length " << longestWordLength << endl;
 }
 
-void findLongestWordSimpleOptimized(const vector<string>& text) {
+void findLongestWordSimpleOptimized(const string& text) {
     string longestWord;
     int longestWordLength = 0;
-    long lineCount = text.size();
 
-    // For every line in the corpus
-    for (const string& line : text) {
-    	int start = 0;
-	const int lineLength = line.size();
-	for (int pos = 0 ; pos < lineLength ; pos++) {
-	    if (line[pos] == ' ') {
-		if ((pos - start) > longestWordLength) {
-		    longestWord = line.substr(start,pos-start);
-		    longestWordLength = longestWord.length();
-		}
-		start = pos + 1;
+    int start = 0;
+    const int textLength = text.size();
+    for (int pos = 0 ; pos < textLength ; pos++) {
+	if (text[pos] == ' ' || text[pos] == '\n') {
+	    if ((pos - start) > longestWordLength) {
+		longestWord = text.substr(start,pos-start);
+		longestWordLength = longestWord.length();
 	    }
-	}
-
-	if ((lineLength - start) > longestWordLength) {
-	    longestWord = line.substr(start,lineLength-start);
-	    longestWordLength = longestWord.length();
+	    start = pos + 1;
 	}
     }
+
+    if ((textLength - start) > longestWordLength) {
+	longestWord = text.substr(start,textLength-start);
+	longestWordLength = longestWord.length();
+    }
+
     cout << "Longest word is '" << longestWord << "' length " << longestWordLength << endl;
 }
 
+/*
 void findLongestWordSimpleOptimizedParallel(const vector<string>& text) {
     string longestWord;
     int longestWordLength = 0;
@@ -275,3 +270,4 @@ void findLongestWordSimpleOptimizedParallel(const vector<string>& text) {
     }
     cout << "Longest word is '" << longestWord << "' length " << longestWordLength << endl;
 }
+*/

@@ -21,7 +21,8 @@ Write your solution, add your name to the top, and send a pull request. It would
 
 | Name             | Language   | Time (ms) | Notes                                |
 |------------------|------------|-----------|--------------------------------------|
-| @dnesbitt03qub   | C++        | 477       | Striding implementation              |
+| @dnesbitt03qub   | C++        | 418       | Striding implementation              |
+| @dnesbitt03qub   | C++        | 675       | Simple optimized                     |
 | @pard68          | Rust       | 1107      | Simple                               |
 | @pard68          | Rust       | 1103      | HashTable                            |
 | Jeffrey Corcoran | C#         | 2275      |                                      |
