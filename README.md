@@ -36,6 +36,7 @@ Write your solution, add your name to the top, and send a pull request. It would
 | @specs           | Python     | 14444     | Loop and sort                        |
 | @specs           | Python     | 16257     | Loop w/ longest                      |
 | @samwi           | Ruby       | 24383     |                                      |
+| @patrickcarver   | Elixir     | 47510     |                                      |
 | @pard68          | Bash       | ~5543     | Native speed - Not running in Docker |
 
 
