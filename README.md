@@ -48,6 +48,7 @@ Write your solution, add your name to the top, and send a pull request. It would
 | Jeffrey Corcoran | C#       | 716       |                   |
 | @pard68          | Rust     | 2016      | Pythonic          |
 | @samwi           | JRuby    | 4679      | 'Multithread 16.' |
+| @patrickcarver   | Elixir   | 13350     |                   |
 | @samwi           | Ruby     | 55339     | 'Multithread 8.'  |
 
 

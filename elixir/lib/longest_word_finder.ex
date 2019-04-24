@@ -1,12 +1,17 @@
 defmodule LongestWordFinder do
   def concurrent() do
+    empty_space = :binary.compile_pattern(" ")
+
     load_corpus()
     |> Flow.from_enumerable()
     |> Flow.map(&String.trim_trailing/1)
-    |> Flow.flat_map(&(String.split(&1, " ")))
+    |> Flow.flat_map(&(String.split(&1, empty_space)))
     |> Flow.partition()
     |> Flow.reduce(fn -> %{word: "", length: 0} end, &longest_word/2)
-    |> Enum.into(%{})
+    |> Flow.departition(fn -> %{word: "", length: 0} end, fn part, acc ->
+        if part.length > acc.length, do: part, else: acc
+      end, &(&1))
+    |> Enum.at(0)
   end
 
   def single_threaded() do
